@@ -6,7 +6,7 @@ import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import { ToastContainer } from 'react-toastify';
 import { useAppDispatch } from './app/hooks';
-import { setUser } from './features/auth/authSlice';
+import { setUserToken } from './features/auth/authSlice';
 
 function App() {
 
@@ -16,7 +16,7 @@ function App() {
 
   // THis is a traditional logic, SO when the app loads or user refresh the page then the All the app's state in the store will be resetted to intitial state, So to set the token back from the preserved localStorage.
   useEffect(() => {
-    dispatch(setUser(user));
+    dispatch(setUserToken(user));
   })
   return (
     <div className="App">

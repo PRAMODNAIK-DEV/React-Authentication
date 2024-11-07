@@ -1,6 +1,6 @@
 import React from 'react'
 import { useAppDispatch } from '../app/hooks'
-import { removeUser } from '../features/auth/authSlice';
+import { removeUserToken } from '../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -9,7 +9,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const handleLogout = () =>{
-    dispatch(removeUser());
+    dispatch(removeUserToken());
     navigate("/");
   }
   return (

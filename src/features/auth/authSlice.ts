@@ -2,14 +2,18 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store"
 
 export interface AuthState{
-    name: string | null;
-    token: string | null;
+    access_token: string | null;
+    refresh_token: string | null;
 }
 
 const initialState: AuthState = {
-    name: null,
-    token: null,
+    access_token: null,
+    refresh_token: null,
 }
+
+// This is a authThunk for Login
+
+
 
 
 export const authSlice = createSlice({
@@ -17,18 +21,18 @@ export const authSlice = createSlice({
     initialState,
     reducers: {
 
-        setUser: (state, action: PayloadAction<{name: string; token: string}>) => {
+        setUserToken: (state, action: PayloadAction<{access_token: string; refresh_token: string}>) => {
 
-            localStorage.setItem("user", JSON.stringify({name: action.payload.name, token: action.payload.token}));
+            localStorage.setItem("user", JSON.stringify({access_token: action.payload.access_token, refresh_token: action.payload.refresh_token}));
 
-            state.name = action.payload.name;
-            state.token = action.payload.token;
+            state.access_token = action.payload.access_token;
+            state.refresh_token = action.payload.refresh_token;
         },
 
-        removeUser: (state) => {
+        removeUserToken: (state) => {
             localStorage.removeItem("user");
-            state.name= null;
-            state.token = null;
+            state.access_token= null;
+            state.refresh_token = null;
             
         }
     }
@@ -36,6 +40,6 @@ export const authSlice = createSlice({
 
 export const selectAuth = (state: RootState) => state.auth;
 
-export const {setUser, removeUser} = authSlice.actions;
+export const {setUserToken, removeUserToken} = authSlice.actions;
 
 export default authSlice.reducer;
