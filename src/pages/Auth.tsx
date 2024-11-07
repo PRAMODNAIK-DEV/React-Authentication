@@ -5,7 +5,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { setUserToken } from '../features/auth/authSlice';
 import { RootState, store } from '../app/store';
-import { log } from 'console';
+import { fetchProtectedData } from '../features/auth/authSlice';
 
 type UserInputType = {
   email: string;
@@ -94,6 +94,9 @@ const Auth = () => {
   // const refreshToken = state.auth;
   // console.log("RootState", state);
   
+  const fetchData = () =>{
+    dispatch(fetchProtectedData());
+  }
 
   return (
     <div className="auth-container">
@@ -148,6 +151,14 @@ const Auth = () => {
           {showRegister ? 'Switch to Login' : 'Switch to Sign Up'}
         </button>
       </form>
+
+      <br /><br />
+      <div>
+        <h2>Fetching Data from Protected API through <strong>Redux Async Thunk</strong></h2>
+        <button className="fetchButton" onClick={fetchData}>
+          Fetch Protected Data
+        </button>
+      </div>
     </div>
   );
 };

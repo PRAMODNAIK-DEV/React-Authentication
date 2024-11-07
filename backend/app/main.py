@@ -5,15 +5,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 import os
+import secrets
+from dotenv import load_dotenv
 
 app = FastAPI()
 
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Ensure this matches your frontend URL
+    allow_origins=["http://localhost:3000","http://127.0.0.1:3000"],  # Your frontend URL
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
 )
 
 # Dummy user storage
@@ -64,13 +67,29 @@ def create_refresh_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def verify_access_token(token: str):
+def verify_access_token(authorization: str = Header(...)):
     try:
+        # Extract the token from the "Bearer <token>" format
+        scheme, token = authorization.split()
+        if scheme.lower() != "bearer":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication scheme",
+            )
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return TokenData(username=payload.get("sub"))
     except JWTError as e:
         print(f"Access token verification error: {str(e)}")
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+        )
+    except ValueError:
+        # This handles cases where Authorization header is not correctly formatted
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization header format",
+        )
 
 def verify_refresh_token(authorization: str = Header(None)):
     if authorization is None or not authorization.startswith("Bearer "):
@@ -141,8 +160,8 @@ def protected_route(token_data: TokenData = Depends(verify_access_token)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
         )
-    return {"message": f"Hello, {token_data.username}!"}
+    return f"Hello, {token_data.username}!"
 
 @app.get("/")
 def root():
-    return {"message": "Hello World1234!"}
+    return "Hello World1234!"
