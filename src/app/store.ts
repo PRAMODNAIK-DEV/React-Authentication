@@ -25,8 +25,9 @@ export const store = configureStore({
 // Solution
 // To resolve this, you can separate the store from the authSlice and axiosInstance configurations to remove the circular dependency.
 
-
 // Step 2: Set Up Interceptors After Store Initialization
+
+// setupInterceptors is called immediately after the store is initialized in store.ts. This setup allows the Axios interceptors to be configured with the most current state of tokens and provides the functions to handle token refresh or token removal as needed.
 setupInterceptors(
   () => store.getState().auth.access_token,
   () => store.getState().auth.refresh_token,
