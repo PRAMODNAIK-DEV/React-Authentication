@@ -1,19 +1,37 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store"
+import axiosInstance from "../../utils/axiosInstance";
 
 export interface AuthState{
     access_token: string | null;
     refresh_token: string | null;
+    loading: boolean;
+    error: string | null;
+    data: string | null
 }
 
 const initialState: AuthState = {
     access_token: null,
     refresh_token: null,
+    loading: false,
+    error: null,
+    data: null,
 }
 
 // This is a authThunk for Login
 
-
+export const fetchProtectedData = createAsyncThunk(
+    'data/fetchProtectedData',
+    async ( _, {rejectWithValue}) => {
+        try{
+            const response = await axiosInstance.get("/protected");
+            return response.data;
+        }
+        catch(error: any){
+            return rejectWithValue(error.response?.data || 'Failed to fetch data');
+        }
+    }
+)
 
 
 export const authSlice = createSlice({
@@ -35,7 +53,23 @@ export const authSlice = createSlice({
             state.refresh_token = null;
             
         }
-    }
+    },
+    extraReducers: (builder) => {
+        builder
+          .addCase(fetchProtectedData.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(fetchProtectedData.fulfilled, (state, action) => {
+            state.loading = false;
+            state.data = action.payload;
+            state.error = null;
+          })
+          .addCase(fetchProtectedData.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload as string;
+          });
+      }, 
 })
 
 export const selectAuth = (state: RootState) => state.auth;
