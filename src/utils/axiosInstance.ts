@@ -13,11 +13,11 @@ export const unauthenticatedAxiosInstance = axios.create({
   baseURL: "http://127.0.0.1:8000",
 });
 
-// export interface IntercepterType {
-//     access_token: string | null;
-//     refresh_token: string | null;
-//     updateAccessToken: (newToken: {access_token: string, refresh_token: string}) => void
-// }
+
+// Step 1: Move Axios Instance Configuration to a Separate File
+// Separate any logic that depends on the store state out of the axiosInstance configuration file. Instead of directly importing the store, you can get the token from a function argument or set up interceptors dynamically after store initialization.
+
+// axiosInstance.ts (without direct store dependency):
 
 export const setupInterceptors = (
   getAccessToken: () => string | null,
