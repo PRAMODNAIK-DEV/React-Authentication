@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { unauthenticatedAxiosInstance } from '../utils/axiosInstance';
+import { axiosInstance } from '../utils/axiosInstance';
 // import {} from '@reduxjs/toolkit/query/react';
 
 export const authApi = createApi({
@@ -9,7 +9,7 @@ export const authApi = createApi({
     // }),
     baseQuery: async ({ url, method, body }: { url: string; method: string; body?: any }) => {
         try {
-          const response = await unauthenticatedAxiosInstance({
+          const response = await axiosInstance({
             url,
             method,
             data: body, // 'data' instead of 'body' as Axios uses 'data' for request payloads
